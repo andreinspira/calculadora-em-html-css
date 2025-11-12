@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora – Aula14</title>
+  <style>
+    :root { font-family: system-ui, Arial, Helvetica, sans-serif; }
+    body { margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0; }
+    .app { max-width: 560px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 20px; }
+    h1 { margin: 0 0 16px; font-size: 20px; letter-spacing:.5px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    label { font-size: 12px; color: #94a3b8; }
+    input[type="number"]{
+      width: 100%; padding: 12px; border-radius: 10px; background:#0b1220; color:#e2e8f0;
+      border: 1px solid #1f2937; outline: none;
+    }
+    input::placeholder{ color:#64748b; }
+    .buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+    button{
+      padding: 12px; border-radius: 12px; background:#1f2937; color:#e2e8f0; border:1px solid #293445;
+      cursor:pointer; font-weight:600;
+    }
+    button:hover{ filter: brightness(1.15); }
+    .btn-op { background:#0f766e; border-color:#0d5e58; }
+    .btn-clear { background:#7f1d1d; border-color:#5f1515; }
+    .result {
+      margin-top: 16px; padding: 14px; border-radius: 12px; background:#0b1220; border:1px solid #1f2937;
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge { font-size: 12px; background:#1f2937; padding:4px 8px; border-radius:999px; color:#93c5fd; border:1px solid #293445;}
+    .out { font-size: 18px; font-weight:700; }
+    .history { margin-top: 14px; font-size: 13px; color:#94a3b8; }
+    .history ul{ margin:8px 0 0; padding-left:18px; }
+    .hint { margin-top: 8px; font-size: 12px; color:#94a3b8; }
+    a{ color:#93c5fd; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Calculadora – Aula14 (JS)</h1>
+
+    <div class="row">
+      <div>
+        <label for="n1">Número 1</label>
+        <input id="n1" type="number" step="any" placeholder="Ex.: 10.5"/>
+      </div>
+      <div>
+        <label for="n2">Número 2</label>
+        <input id="n2" type="number" step="any" placeholder="Ex.: 3"/>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-op" onclick="operar('+')">+</button>
+      <button class="btn-op" onclick="operar('-')">−</button>
+      <button class="btn-op" onclick="operar('*')">×</button>
+      <button class="btn-op" onclick="operar('/')">÷</button>
+      <button class="btn-clear" onclick="limpar()">Limpar</button>
+    </div>
+
+    <div class="result">
+      <span class="badge">Resultado</span>
+      <span id="saida" class="out">—</span>
+    </div>
+
+    <div class="history">
+      <strong>Histórico</strong>
+      <ul id="historico"></ul>
+    </div>
+
+    <div class="hint">
+      Dica: os valores são convertidos com <code>parseFloat</code>. Se quiser inteiros, troque por <code>parseInt</code>.
+    </div>
+  </div>
+
+  <script>
+    // Funções baseadas nas aulas (soma, parseFloat/parseInt)
+    function soma(n1, n2){ return n1 + n2; }
+    function sub(n1, n2){ return n1 - n2; }
+    function mul(n1, n2){ return n1 * n2; }
+    function div(n1, n2){ return n1 / n2; }
+
+    function getNumeros(){
+      const v1 = document.getElementById('n1').value;
+      const v2 = document.getElementById('n2').value;
+
+      const n1 = parseFloat(v1);
+      const n2 = parseFloat(v2);
+
+      if (isNaN(n1) || isNaN(n2)) {
+        throw new Error('Preencha os dois números corretamente.');
+      }
+      return { n1, n2 };
+    }
+
+    function operar(op){
+      const saida = document.getElementById('saida');
+      const hist = document.getElementById('historico');
+
+      try {
+        const { n1, n2 } = getNumeros();
+        let res;
+
+        switch(op){
+          case '+': res = soma(n1, n2); break;
+          case '-': res = sub(n1, n2); break;
+          case '*': res = mul(n1, n2); break;
+          case '/':
+            if (n2 === 0) throw new Error('Divisão por zero não é permitida.');
+            res = div(n1, n2);
+            break;
+          default: throw new Error('Operação inválida');
+        }
+
+        // Mostra com até 6 casas quando necessário
+        const exib = Number.isInteger(res) ? res.toString() : res.toFixed(6).replace(/\.?0+$/,'');
+        saida.textContent = exib;
+
+        const li = document.createElement('li');
+        li.textContent = `${n1} ${op} ${n2} = ${exib}`;
+        hist.prepend(li); // mais recente no topo
+      } catch (e){
+        saida.textContent = e.message;
+      }
+    }
+
+    function limpar(){
+      document.getElementById('n1').value = '';
+      document.getElementById('n2').value = '';
+      document.getElementById('saida').textContent = '—';
+      document.getElementById('n1').focus();
+    }
+  </script>
+</body>
+</html>

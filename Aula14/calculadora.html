@@ -70,12 +70,10 @@
     </div>
 
     <div class="hint">
-      Dica: os valores são convertidos com <code>parseFloat</code>. Se quiser inteiros, troque por <code>parseInt</code>.
     </div>
   </div>
 
   <script>
-    // Funções baseadas nas aulas (soma, parseFloat/parseInt)
     function soma(n1, n2){ return n1 + n2; }
     function sub(n1, n2){ return n1 - n2; }
     function mul(n1, n2){ return n1 * n2; }
@@ -113,13 +111,12 @@
           default: throw new Error('Operação inválida');
         }
 
-        // Mostra com até 6 casas quando necessário
         const exib = Number.isInteger(res) ? res.toString() : res.toFixed(6).replace(/\.?0+$/,'');
         saida.textContent = exib;
 
         const li = document.createElement('li');
         li.textContent = `${n1} ${op} ${n2} = ${exib}`;
-        hist.prepend(li); // mais recente no topo
+        hist.prepend(li); 
       } catch (e){
         saida.textContent = e.message;
       }
